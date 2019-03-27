@@ -1,4 +1,4 @@
-package com.procamp;
+package com.procamp.samples;
 
 public class App {
     static ThreadLocal<Integer> local = new ThreadLocal<Integer>();

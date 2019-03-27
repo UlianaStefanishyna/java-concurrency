@@ -1,4 +1,4 @@
-package com.procamp;
+package com.procamp.samples;
 
 public class Sample {
     public static void main(String[] args) {

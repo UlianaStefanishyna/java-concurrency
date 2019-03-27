@@ -1,4 +1,4 @@
-package com.procamp;
+package com.procamp.samples;
 
 import java.util.ArrayList;
 import java.util.Arrays;

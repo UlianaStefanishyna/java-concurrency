@@ -18,8 +18,7 @@ class Service {
 }
 
 class Repository {
-    void print() {
-        int value = SecurityContextHolder.get();
-        System.out.println(value);
+    int print() {
+        return SecurityContextHolder.get();
     }
 }

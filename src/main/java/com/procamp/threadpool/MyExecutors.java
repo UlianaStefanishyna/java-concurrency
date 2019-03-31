@@ -4,9 +4,7 @@ import com.procamp.threadpool.exception.ThreadPoolIsStoppedException;
 import com.procamp.threadpool.exception.WorkQueueIsFullException;
 import com.procamp.threadpool.service.MyExecutorService;
 
-import java.util.LinkedList;
 import java.util.Optional;
-import java.util.Queue;
 
 public class MyExecutors implements MyExecutorService {
 
@@ -14,19 +12,21 @@ public class MyExecutors implements MyExecutorService {
      * Creates a new ThreadPool with the given initial number of threads and work queue size
      *
      * @param poolSize      the number of threads to keep in the pool, even
-     *                      if they are idle
+     * if they are idle
      * @param workQueueSize the queue to use for holding tasks before they are
-     *                      executed.  This queue will hold only the {@code Runnable}
-     *                      tasks submitted by the {@code execute} method.
+     * executed.  This queue will hold only the {@code Runnable}
+     * tasks submitted by the {@code execute} method.
      */
 
-    private final Queue<Runnable> workQueue;
+    private final BlockingQueue<Runnable> workQueue;
+
+    /**
+     * isRunning - volatile global variable used to manage that executor is running
+     */
     private volatile boolean isRunning = true;
-    private int workQueueSize;
 
     private MyExecutors(int poolSize, int workQueueSize) {
-        this.workQueue = new LinkedList<>();
-        this.workQueueSize = workQueueSize;
+        this.workQueue = new BlockingQueue<>(workQueueSize);
         for (int i = 0; i < poolSize; i++) {
             new Thread(new TaskWorker()).start();
         }
@@ -56,21 +56,18 @@ public class MyExecutors implements MyExecutorService {
     private final class TaskWorker implements Runnable {
         public void run() {
             while (isRunning) {
-                final Runnable nextTask = poll();
+                final Runnable nextTask = workQueue.poll();
                 Optional.ofNullable(nextTask).ifPresent(task -> nextTask.run());
             }
         }
     }
 
     private synchronized void addToQueue(Runnable command) {
-        if (this.workQueue.size() < workQueueSize) {
-            this.workQueue.offer(command);
-        } else {
+        try {
+            this.workQueue.put(command);
+        } catch (InterruptedException e) {
             throw new WorkQueueIsFullException("Work queue is full");
         }
     }
 
-    private synchronized Runnable poll() {
-        return workQueue.poll();
-    }
 }

@@ -13,7 +13,7 @@ public class MyExecutorsTest {
     public void testExecuteWhenQueueIsFull_thenThrowException() {
         MyExecutorService myExecutorService = MyExecutors.newFixedThreadPool(2);
         IntStream.range(0, 100)
-                .forEach(k -> myExecutorService.execute(() -> System.out.println("string " + k)));
+                .forEach(k -> myExecutorService.execute(() -> System.out.print("string " + k + "; ")));
         myExecutorService.shutdownNow();
     }
 
@@ -21,7 +21,7 @@ public class MyExecutorsTest {
     public void testExecuteWhenPoolIsAlreadyShutDown_thenThrowException() {
         MyExecutorService myExecutorService = MyExecutors.newFixedThreadPool(2);
         IntStream.range(0, 5)
-                .forEach(k -> myExecutorService.execute(() -> System.out.println("string " + k)));
+                .forEach(k -> myExecutorService.execute(() -> System.out.print("string " + k + "; ")));
         myExecutorService.shutdownNow();
         myExecutorService.execute(() -> System.out.println("wrong call"));
     }

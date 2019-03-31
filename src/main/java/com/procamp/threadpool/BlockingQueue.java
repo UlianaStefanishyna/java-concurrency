@@ -32,6 +32,6 @@ public class BlockingQueue<T> {
                 e.printStackTrace();
             }
         }
-        return this.queue.remove(0);
+        return this.queue.poll();
     }
 }

@@ -7,7 +7,8 @@ import lombok.experimental.Accessors;
 @Getter
 @Builder
 @Accessors(chain = true)
-class Account {
+@SuppressWarnings("all")
+public class Account {
 
     private int id;
     private int amount;

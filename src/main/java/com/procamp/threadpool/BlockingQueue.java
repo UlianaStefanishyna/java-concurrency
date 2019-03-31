@@ -1,7 +1,10 @@
 package com.procamp.threadpool;
 
+import com.procamp.threadpool.exception.WorkQueueIsFullException;
+
 import java.util.LinkedList;
 
+@SuppressWarnings("WeakerAccess")
 public class BlockingQueue<T> {
 
     private LinkedList<T> queue = new LinkedList<>();
@@ -11,17 +14,17 @@ public class BlockingQueue<T> {
         this.workQueueSize = workQueueSize;
     }
 
-    public synchronized void put(T runnable) throws InterruptedException {
+    public synchronized void put(T command) {
         if (this.queue.size() == this.workQueueSize) {
-            wait();
+            throw new WorkQueueIsFullException("Work queue is full");
         }
         if (this.queue.isEmpty()) {
             notifyAll();
         }
-        this.queue.add(runnable);
+        this.queue.add(command);
     }
 
-    public synchronized T poll(){
+    public synchronized T poll() {
         while (this.queue.size() == 0) {
             try {
                 wait();

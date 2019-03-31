@@ -1,4 +1,4 @@
-package com.procamp.sync;
+package com.procamp.synchronization;
 
 import lombok.Builder;
 import lombok.Getter;

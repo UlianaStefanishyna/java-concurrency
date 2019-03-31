@@ -1,11 +1,11 @@
 package com.procamp.threadpool;
 
 import com.procamp.threadpool.exception.ThreadPoolIsStoppedException;
-import com.procamp.threadpool.exception.WorkQueueIsFullException;
 import com.procamp.threadpool.service.MyExecutorService;
 
 import java.util.Optional;
 
+@SuppressWarnings("WeakerAccess")
 public class MyExecutors implements MyExecutorService {
 
     /**
@@ -43,7 +43,7 @@ public class MyExecutors implements MyExecutorService {
 
     public void execute(Runnable command) {
         if (isRunning) {
-            this.addToQueue(command);
+            this.workQueue.put(command);
         } else {
             throw new ThreadPoolIsStoppedException("Thread pool is stopped");
         }
@@ -61,13 +61,4 @@ public class MyExecutors implements MyExecutorService {
             }
         }
     }
-
-    private synchronized void addToQueue(Runnable command) {
-        try {
-            this.workQueue.put(command);
-        } catch (InterruptedException e) {
-            throw new WorkQueueIsFullException("Work queue is full");
-        }
-    }
-
 }

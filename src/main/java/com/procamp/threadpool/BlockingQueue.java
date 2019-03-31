@@ -32,9 +32,6 @@ public class BlockingQueue<T> {
                 e.printStackTrace();
             }
         }
-        if (this.queue.size() == this.workQueueSize) {
-            notifyAll();
-        }
         return this.queue.remove(0);
     }
 }

@@ -12,7 +12,8 @@ public class MyBankTest {
 
     private MyBank myBank;
 
-    private Runnable command;
+    private Runnable commandOne;
+    private Runnable commandTwo;
 
     @Before
     public void init() {
@@ -25,10 +26,8 @@ public class MyBankTest {
 
         myBank = new MyBank(Arrays.asList(account1, account2));
 
-        command = () -> {
-            myBank.transfer(1, 2, 100);
-            myBank.transfer(2, 1, 100);
-        };
+        commandOne = () -> myBank.transfer(1, 2, 100);
+        commandTwo = () -> myBank.transfer(2, 1, 100);
     }
 
     @Test
@@ -47,12 +46,37 @@ public class MyBankTest {
         int totalBalanceBefore = myBank.total();
         System.out.println("before : " + totalBalanceBefore);
 
-        IntStream.range(0, 100).forEach(a -> new Thread(command).start());
+        IntStream.range(0, 5).forEach(a -> new Thread(commandOne).start());
+        IntStream.range(0, 5).forEach(a -> new Thread(commandTwo).start());
 
         int totalBalanceAfter = myBank.total();
 
+        assertEquals(totalBalanceBefore, totalBalanceAfter);
         System.out.println("after  : " + totalBalanceAfter);
+    }
 
+    @Test
+    @SuppressWarnings("all")
+    public void testDeadLockSync() {
+        int totalBalanceBefore = myBank.total();
+        System.out.println("before : " + totalBalanceBefore);
+
+        new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+                myBank.transfer(1, 2, 10);
+            }
+        }).start();
+
+        new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+                myBank.transfer(2, 1, 10);
+            }
+        }).start();
+
+        int totalBalanceAfter = myBank.total();
+
+        assertEquals(totalBalanceBefore, totalBalanceAfter);
+        System.out.println("after  : " + totalBalanceAfter);
     }
 
 }

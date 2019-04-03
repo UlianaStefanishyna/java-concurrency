@@ -16,12 +16,22 @@ public class MyBank {
         Account from = findById(fromAccountId);
         Account to = findById(toAccountId);
 
-//        synchronized (from) {
-        from.withdraw(amount);
-//            synchronized (to) {
-        to.deposit(amount);
-//            }
-//        }
+        if (toAccountId > fromAccountId) {
+            synchronized (from) {
+                from.withdraw(amount);
+                synchronized (to) {
+                    to.deposit(amount);
+                }
+            }
+        } else {
+            synchronized (to) {
+                from.withdraw(amount);
+                synchronized (from) {
+                    to.deposit(amount);
+                }
+            }
+        }
+
     }
 
     public int total() {

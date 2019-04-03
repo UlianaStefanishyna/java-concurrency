@@ -11,15 +11,15 @@ import lombok.experimental.Accessors;
 public class Account {
 
     private int id;
-    private volatile int amount;
+    private  int amount;
 
-    synchronized void deposit(int amount) {
+     void deposit(int amount) {
 //        System.out.println("deposit init :" + Thread.currentThread().getName() + " , amount = " + this.amount);
         this.amount += amount;
 //        System.out.println("deposit finished : " + Thread.currentThread().getName() + " , amount = " + this.amount);
     }
 
-    synchronized void withdraw(int amount) {
+     void withdraw(int amount) {
 //        System.out.println("withdraw init : " + Thread.currentThread().getName() + " , amount = " + this.amount);
         this.amount -= amount;
 //        System.out.println("withdraw finished : " + Thread.currentThread().getName() + " , amount = " + this.amount);
